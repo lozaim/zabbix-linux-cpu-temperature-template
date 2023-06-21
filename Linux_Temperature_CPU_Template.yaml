@@ -1,0 +1,80 @@
+zabbix_export:
+  version: '6.0'
+  date: '2023-06-21T09:05:01Z'
+  groups:
+    -
+      uuid: dc579cd7a1a34222933f24f52a68bcd8
+      name: 'Linux servers'
+  templates:
+    -
+      uuid: abf4faf6f3574c3ebb12aad4c0814f59
+      template: 'Linux Temperature CPU'
+      name: 'Linux Temperature CPU'
+      description: |
+        Temperature CPU with user parametr 
+        usig lm-sensors
+      groups:
+        -
+          name: 'Linux servers'
+      items:
+        -
+          uuid: b4d87492760b43489379869136b3e771
+          name: 'Temp CPU avg'
+          key: pve-t-cpu.average
+          history: 30d
+          value_type: FLOAT
+          triggers:
+            -
+              uuid: ba8dab9253db415d9dd3737e8b4da511
+              expression: 'last(/Linux Temperature CPU/pve-t-cpu.average,#3)=70'
+              name: 'Avg CPU Temperature > 70'
+              priority: HIGH
+        -
+          uuid: e026404263a946d4bcbfd2522c421400
+          name: 'Temp CPU max'
+          key: pve-t-cpu.max
+          history: 30d
+          value_type: FLOAT
+          triggers:
+            -
+              uuid: e2c7dca25373427186f20daf4faee1c9
+              expression: 'last(/Linux Temperature CPU/pve-t-cpu.max,#3)>=70'
+              name: 'Max CPU Temperature > 70'
+              priority: HIGH
+            -
+              uuid: 94dec428ebcd42fe9954669a92ac56c5
+              expression: 'last(/Linux Temperature CPU/pve-t-cpu.max,#1)>=82'
+              name: 'Max CPU Temperature > 82'
+              priority: DISASTER
+        -
+          uuid: 8850f856f56742f6896c02cd18c72adf
+          name: 'Temp CPU min'
+          key: pve-t-cpu.min
+          history: 30d
+          value_type: FLOAT
+  graphs:
+    -
+      uuid: 07d0b0e579f249fdb0743d3e727f0029
+      name: Temperature
+      width: '500'
+      graph_items:
+        -
+          color: 199C0D
+          calc_fnc: ALL
+          item:
+            host: 'Linux Temperature CPU'
+            key: pve-t-cpu.average
+        -
+          sortorder: '1'
+          color: F63100
+          calc_fnc: ALL
+          item:
+            host: 'Linux Temperature CPU'
+            key: pve-t-cpu.max
+        -
+          sortorder: '2'
+          color: 2774A4
+          calc_fnc: ALL
+          item:
+            host: 'Linux Temperature CPU'
+            key: pve-t-cpu.min
